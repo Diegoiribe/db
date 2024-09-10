@@ -10,15 +10,17 @@ import time
 from datetime import datetime
 from sqlalchemy import extract, cast, Date
 import locale
+import logging
 
 locale.setlocale(locale.LC_TIME, 'es_ES.utf8')
 
-# Argument parser
 cliente_parser = reqparse.RequestParser()
-cliente_parser.add_argument('name', type=str, required=True, help='Name is required')
-cliente_parser.add_argument('cellphone', type=str, required=True, help='Cellphone is required')
-cliente_parser.add_argument('date', type=str, required=True, help='Date is required')
-cliente_parser.add_argument('time', type=str, required=True, help='Time is required')
+cliente_parser.add_argument('cellphone', type=str, required=True, help="Cellphone is required")
+cliente_parser.add_argument('name', type=str, required=True, help="Name is required")
+cliente_parser.add_argument('date', type=str, required=True, help="Date is required")
+cliente_parser.add_argument('time', type=str, required=True, help="Time is required")
+cliente_parser.add_argument('services', type=str, required=True, help="Services is required")
+
 
 def retry(func):
     def wrapper(*args, **kwargs):
@@ -75,9 +77,10 @@ class Clientes(Resource):
                 # Convertir el timestamp de milisegundos a segundos
                 timestamp = int(fecha) / 1000
                 fecha_formateada = dt.datetime.fromtimestamp(timestamp).date()
+                
             except ValueError:
                 return {"message": "El formato de la fecha no es válido. Usa un timestamp válido"}, 400
-
+            
             # Definir el conjunto de horas del día en formato de 24 horas con segundos (HH:MM:SS)
             horas_totales = [
                 "09:00:00", "10:00:00", "11:00:00", "12:00:00", "13:00:00",
@@ -198,6 +201,11 @@ class Clientes(Resource):
     def post(self):
         args = cliente_parser.parse_args()
         try:
+            # Verificar si el campo 'services' está presente en los argumentos
+            if 'services' not in args or not args['services']:
+                raise ValueError("El campo 'services' es obligatorio y no puede estar vacío")
+
+            # Crear el cliente desde los datos recibidos en 'args'
             cliente = ClienteModel.from_json(args)
 
             # Guardar el cliente en la base de datos
@@ -207,7 +215,14 @@ class Clientes(Resource):
             return cliente.to_json(), 201
 
         except (ValueError, TypeError) as e:
-            return {'error': str(e)}, 400
+            # Loggear el error y devolver una respuesta detallada
+            logging.error(f"Error al procesar el cliente: {str(e)}")
+            return {'error': f"Error al procesar los datos: {str(e)}"}, 400
+
+        except Exception as e:
+            # Capturar cualquier otro error no esperado
+            logging.error(f"Error inesperado: {str(e)}")
+            return {'error': f"Error inesperado: {str(e)}"}, 500
 
 
     

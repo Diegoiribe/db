@@ -7,9 +7,10 @@ class Cliente(db.Model):
     name = db.Column(db.String(50), nullable=False)
     date = db.Column(db.Date, nullable=False)  # Solo la fecha
     time = db.Column(db.Time, nullable=False)   # Solo la hora
+    services = db.Column(db.String(50), nullable=False)
     register_date = db.Column(db.Date, default=dt.datetime.now)
     days_for_appointment = db.Column(db.Integer, default=0)
-
+    
     def __repr__(self):
         return f"<Cliente {self.name}>"
 
@@ -21,6 +22,7 @@ class Cliente(db.Model):
             "register_date": self.register_date.isoformat() if self.register_date else None,
             "date": self.date.isoformat() if self.date else None,
             "time": self.time.strftime("%H:%M:%S") if self.time else None,
+            "services": self.services,
             "days_for_appointment": self.days_for_appointment
         }
 
@@ -37,6 +39,9 @@ class Cliente(db.Model):
             # Convertir la hora de formato "%H:%M:%S"
             time = dt.datetime.strptime(cliente_json.get('time'), "%H:%M:%S").time()
 
+            # Obtener el servicio o asignar un valor predeterminado si no se proporciona
+            services = cliente_json.get("services", "Servicio estándar")  # Valor predeterminado
+
             # Crear el objeto cliente con la fecha y hora convertidas
             register_date = dt.datetime.now()
 
@@ -47,7 +52,8 @@ class Cliente(db.Model):
                 cellphone=cellphone, 
                 name=name, 
                 date=date, 
-                time=time, 
+                time=time,
+                services=services,
                 register_date=register_date, 
                 days_for_appointment=days_for_appointment
             )
