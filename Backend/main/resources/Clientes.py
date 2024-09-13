@@ -98,6 +98,7 @@ class Clientes(Resource):
                     {
                         "id": hora,  # El ID ya está en formato de 24 horas con segundos
                         "title": dt.datetime.strptime(hora, "%H:%M:%S").strftime("%I:%M %p")  # Convertir a formato 12 horas
+                        
                     } for hora in horas_totales
                 ]
                 return {"fecha": str(fecha_formateada), "slots": slots_disponibles}, 200
