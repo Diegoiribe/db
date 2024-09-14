@@ -12,13 +12,7 @@ def create_app():
     app = Flask(__name__)
     load_dotenv()
 
-    PATH = os.getenv("DATABASE_PATH")
-    DB_NAME = os.getenv("DATABASE_NAME")
-    if not os.path.exists(f"{PATH}{DB_NAME}"):
-        os.chdir(f"{PATH}")
-        file = os.open(f"{DB_NAME}", os.O_CREAT)
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{PATH}{DB_NAME}"
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://root:exHkAZbweJXmVNyrqdtQJruzcjucCPzv@autorack.proxy.rlwy.net:15807/railway"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
