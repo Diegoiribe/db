@@ -12,8 +12,11 @@ from sqlalchemy import extract, cast, Date
 import locale
 import logging
 
-locale.setlocale(locale.LC_TIME, 'es_ES.utf8')
-
+try:
+    locale.setlocale(locale.LC_TIME, 'es_ES.utf8')
+except locale.Error:
+    locale.setlocale(locale.LC_TIME, 'C')  # Usa el locale predeterminado si falla
+    
 cliente_parser = reqparse.RequestParser()
 cliente_parser.add_argument('cellphone', type=str, required=True, help="Cellphone is required")
 cliente_parser.add_argument('name', type=str, required=True, help="Name is required")
