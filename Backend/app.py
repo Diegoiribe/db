@@ -1,25 +1,13 @@
+from flask_migrate import Migrate
 from main import create_app, db
 import os
 
-def upgrade_database():
-    with db.engine.connect() as connection:
-        connection.execute("ALTER TABLE usuarios MODIFY COLUMN imagen LONGBLOB")
-        print("Columna 'imagen' modificada a LONGBLOB")
-
 app = create_app()
 
-# Crear el contexto de la aplicación
-with app.app_context():
-    # Ejecutar la migración de la base de datos antes de iniciar el servidor
-    try:
-        upgrade_database()
-        print("Migración ejecutada exitosamente")
-    except Exception as e:
-        print(f"Error al ejecutar la migración: {str(e)}")
+# Inicializa Flask-Migrate
+migrate = Migrate(app, db)
 
-    # Crear todas las tablas (si es necesario)
-    db.create_all()
-
-# Iniciar el servidor Flask
 if __name__ == '__main__':
+    # Asegúrate de que las tablas existan antes de iniciar el servidor
+    db.create_all()
     app.run(port=os.getenv("PORT"), debug=True)
