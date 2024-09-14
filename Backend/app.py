@@ -6,13 +6,10 @@ def upgrade_database():
         connection.execute("ALTER TABLE usuarios MODIFY COLUMN imagen LONGBLOB")
         print("Columna 'imagen' modificada a LONGBLOB")
 
-# Crear la aplicación
 app = create_app()
 
 # Crear el contexto de la aplicación
-app.app_context().push()
-
-if __name__ == '__main__':
+with app.app_context():
     # Ejecutar la migración de la base de datos antes de iniciar el servidor
     try:
         upgrade_database()
@@ -20,8 +17,9 @@ if __name__ == '__main__':
     except Exception as e:
         print(f"Error al ejecutar la migración: {str(e)}")
 
-    # Asegúrate de que las tablas existan
+    # Crear todas las tablas (si es necesario)
     db.create_all()
-    
-    # Iniciar el servidor Flask
+
+# Iniciar el servidor Flask
+if __name__ == '__main__':
     app.run(port=os.getenv("PORT"), debug=True)
