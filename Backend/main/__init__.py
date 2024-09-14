@@ -12,7 +12,7 @@ def create_app():
     app = Flask(__name__)
     load_dotenv()
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://root:exHkAZbweJXmVNyrqdtQJruzcjucCPzv@autorack.proxy.rlwy.net:15807/railway"
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://root:exHkAZbweJXmVNyrqdtQJruzcjucCPzv@autorack.proxy.rlwy.net:15807/railway"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
