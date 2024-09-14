@@ -8,7 +8,7 @@ class Usuario(db.Model):
     email = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(50), nullable=False)
     active = db.Column(db.Boolean, default=True)
-    imagen = db.Column(db.LONGBLOB )  # Columna para almacenar la imagen
+    imagen = db.Column(db.LargeBinary)  # Columna para almacenar la imagen
 
     def __repr__(self):
         return f"<Usuario {self.username}>"
